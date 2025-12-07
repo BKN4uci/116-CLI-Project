@@ -268,6 +268,14 @@ def main():
         mid = int(sys.argv[2])
         bmid = int(sys.argv[3])
         add_customized_model(cursor, mid, bmid)
+    elif sys.argv[1] == "countCustomizedModel":
+        input_bmids = sys.argv[2:]
+        unique_bmids = sorted({int(x) for x in input_bmids})
+        countCustomizedModel(unique_bmids,cursor)
+    elif sys.argv[1] == "topNDurationConfig":
+        client_uid = int(sys.argv[2])
+        n = int(sys.argv[3])
+        findTopLongestDuration(client_uid, n)
     elif(sys.argv[1]=="listBaseModelKeyWord"):
         listBaseModelKeyWord(cursor,sys.argv[2])
  
