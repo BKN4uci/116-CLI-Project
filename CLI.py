@@ -160,7 +160,21 @@ def file_read(file_name,folder_path,cursor):
             row = [val.strip() for val in row]  # remove extra whitespace
             cursor.execute(sql, row)  # insert row
 
-
+def listBaseModelKeyWord(cursor,keyword):
+    key = f"%{keyword}%"
+    cursor.execute(
+        "SELECT DISTINCT BM.bmid "
+        "FROM BaseModel BM "
+        "JOIN ModelServices MS ON BM.bmid = MS.bmid "
+        "JOIN LLMService LLM ON MS.sid = LLM.sid "
+        "WHERE LLM.domain LIKE %s "
+        "ORDER BY BM.bmid ASC "
+        "LIMIT 5;",
+        (key,)
+    )
+    rows = cursor.fetchall()
+    for row in rows:
+        print(row[0])
 
 
 def main():
@@ -178,6 +192,8 @@ def main():
     #put your function and needed arguments in here
     if(sys.argv[1]=="import"):
        import_data(cursor,mydb,sys.argv[2])
+    elif(sys.argv[1]=="listBaseModelKeyWord"):
+        listBaseModelKeyWord(cursor,sys.argv[2])
  
 
 
