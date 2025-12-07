@@ -193,6 +193,15 @@ def add_customized_model(mydb, cursor, mid, bmid):
     except mysql.connector.Error as e:
         print("Fail")
 
+def delete_base_model(mydb, cursor, bmid):
+    try:
+        query = "DELETE FROM BaseModel WHERE bmid = %s"
+        cursor.execute(query, (bmid,))
+        mydb.commit()
+        print("Success")
+    except mysql.connector.Error as e:
+        print("Fail")
+        
 def listBaseModelKeyWord(cursor,keyword):
     key = f"%{keyword}%"
     cursor.execute(
@@ -240,6 +249,9 @@ def main():
         mid = int(sys.argv[2])
         bmid = int(sys.argv[3])
         add_customized_model(mydb, cursor, mid, bmid)
+    elif sys.argv[1] == "deleteBaseModel":
+        bmid = int(sys.argv[2])
+        delete_base_model(mydb, cursor, bmid)
     elif(sys.argv[1]=="listBaseModelKeyWord"):
         listBaseModelKeyWord(cursor,sys.argv[2])
  
