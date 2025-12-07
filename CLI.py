@@ -160,6 +160,15 @@ def file_read(file_name,folder_path,cursor):
             row = [val.strip() for val in row]  # remove extra whitespace
             cursor.execute(sql, row)  # insert row
 
+def add_customized_model(mid, bmid):
+    try:
+        query = "INSERT INTO CustomizedModel (mid, bmid) VALUES (%s, %s)"
+        cursor.execute(query, (mid, bmid))
+        cursor.connection.commit()
+        print("Success")
+    except mysql.connector.Error as e:
+        print("Fail")
+
 def listBaseModelKeyWord(cursor,keyword):
     key = f"%{keyword}%"
     cursor.execute(
@@ -192,6 +201,10 @@ def main():
     #put your function and needed arguments in here
     if(sys.argv[1]=="import"):
        import_data(cursor,mydb,sys.argv[2])
+    elif sys.argv[1] == "addCustomizedModel":
+        mid = int(sys.argv[2])
+        bmid = int(sys.argv[3])
+        add_customized_model(cursor, mid, bmid)
     elif(sys.argv[1]=="listBaseModelKeyWord"):
         listBaseModelKeyWord(cursor,sys.argv[2])
  
