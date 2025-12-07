@@ -160,7 +160,7 @@ def file_read(file_name,folder_path,cursor):
             row = [val.strip() for val in row]  # remove extra whitespace
             cursor.execute(sql, row)  # insert row
 
-def insert_agent_client(cursor, uid, username, email, cardno, carholder, expire, zip_code, interests):
+def insert_agent_client(cursor, uid, username, email, cardno, cardholder, expire, cvv, zip_code, interests):
     try:
         # Insert into User table
         cursor.execute(
@@ -174,9 +174,9 @@ def insert_agent_client(cursor, uid, username, email, cardno, carholder, expire,
             (uid, interests, cardholder, expire, cardno, cvv, zip)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
             """,
-            (uid, interests, cardholder, expire, cardno, cvv, zip)
+            (uid, interests, cardholder, expire, cardno, cvv, zip_code)
         )
-        cursor,connection.commit()
+        cursor.connection.commit()
         print("Success")
     
     except mysql.connector.Error as e:
@@ -192,6 +192,19 @@ def add_customized_model(cursor, mid, bmid):
         print("Success")
     except mysql.connector.Error as e:
         print("Fail")
+
+def findTopLongestDuration(cursor, client_uid, n: int):
+    cursor.execute(
+        f"SELECT c.cid, c.uid, c.label, c.content, u.duration"
+        f"FROM Configuration c, ModelConfigurations u"
+        f"WHERE c.uid = {client_uid} AND (SELECT u.duration"
+                                        f"FROM ModelConfigurations u"
+                                        f"ORDER BY u.duration DSC"
+                                        f"LIMIT {n};)")
+    
+    rows = cursor.fetchall()
+    for row in rows:
+        print(row)
 
 def listBaseModelKeyWord(cursor,keyword):
     key = f"%{keyword}%"
