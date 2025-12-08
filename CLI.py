@@ -216,7 +216,7 @@ def countCustomizedModel(bmodels,cursor):
     cursor.execute(sql, bmodels)
     rows = cursor.fetchall()
     for row in rows:
-        print(row)
+        print(",".join(str(x) for x in row))
         
 def findTopLongestDuration(cursor, client_uid, n: int):
     cursor.execute(
@@ -251,10 +251,10 @@ def listBaseModelKeyWord(cursor,keyword):
 def main():
     mydb = mysql.connector.connect(
         
-        host="host",
-        user="user",
+        host="localhost",
+        user="test",
         password="password",
-        database="cs122a_hw2"
+        database="cs122a"
     )
 
     cursor = mydb.cursor()
