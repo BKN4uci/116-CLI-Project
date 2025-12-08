@@ -208,19 +208,21 @@ def delete_base_model(mydb, cursor, bmid):
     except mysql.connector.Error as e:
         print("Fail")
 
-def countCustomizedModel(bmodels,cursor):
-    # Adds variable amount of base model IDs for the SQL
+def countCustomizedModel(bmodels, cursor):
+    # Prepare placeholders for variable number of BMIDs
     placeholders = ", ".join(["%s"] * len(bmodels))
     sql = f"""
-        SELECT bmid, COUNT(*) AS num_customized
-        FROM CustomizedModel
-        WHERE bmid IN ({placeholders})
-        GROUP BY bmid
-        ORDER BY bmid ASC;
+        SELECT BM.bmid, BM.description, COUNT(CM.mid) AS num_customized
+        FROM BaseModel BM
+        LEFT JOIN CustomizedModel CM ON BM.bmid = CM.bmid
+        WHERE BM.bmid IN ({placeholders})
+        GROUP BY BM.bmid, BM.description
+        ORDER BY BM.bmid ASC;
     """
     
     cursor.execute(sql, bmodels)
     rows = cursor.fetchall()
+    
     for row in rows:
         print(",".join(str(x) for x in row))
         
@@ -237,21 +239,24 @@ def findTopLongestDuration(cursor, client_uid, n: int):
     for row in rows:
         print(row)
 
-def listBaseModelKeyWord(cursor,keyword):
+def listBaseModelKeyWord(cursor, keyword):
     key = f"%{keyword}%"
     cursor.execute(
-        "SELECT DISTINCT BM.bmid "
-        "FROM BaseModel BM "
-        "JOIN ModelServices MS ON BM.bmid = MS.bmid "
-        "JOIN LLMService LLM ON MS.sid = LLM.sid "
-        "WHERE LLM.domain LIKE %s "
-        "ORDER BY BM.bmid ASC "
-        "LIMIT 5;",
+        """
+        SELECT BM.bmid, MS.sid, I.provider, LLM.domain
+        FROM BaseModel BM
+        JOIN ModelServices MS ON BM.bmid = MS.bmid
+        JOIN LLMService LLM ON MS.sid = LLM.sid
+        JOIN InternetService I ON MS.sid = I.sid
+        WHERE LLM.domain LIKE %s
+        ORDER BY BM.bmid ASC
+        LIMIT 5;
+        """,
         (key,)
     )
     rows = cursor.fetchall()
     for row in rows:
-        print(row[0])
+        print(",".join(str(x) for x in row))
 
 
 def main():
