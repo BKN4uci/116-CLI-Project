@@ -166,7 +166,7 @@ def file_read(file_name,folder_path,cursor):
             row = [val.strip() for val in row]  # remove extra whitespace
             cursor.execute(sql, row)  # insert row
 
-def insert_agent_client(mydb, cursor, uid, username, email, cardno, cardholder, expire, zip_code, interests):
+def insert_agent_client(mydb, cursor, uid, username, email, cardno, cardholder, expire, cvv, zip_code, interests):
     try:
         # Insert into User table
         cursor.execute(
@@ -200,12 +200,19 @@ def add_customized_model(mydb, cursor, mid, bmid):
         print("Fail")
 
 def delete_base_model(mydb, cursor, bmid):
-    try:
-        query = "DELETE FROM BaseModel WHERE bmid = %s"
-        cursor.execute(query, (bmid,))
+        try:
+        cursor.execute("DELETE FROM BaseModel WHERE bmid = %s", (bmid,))
+
+        if cursor.rowcount == 0:
+            mydb.rollback()
+            print("Fail")
+            return
+
         mydb.commit()
         print("Success")
-    except mysql.connector.Error as e:
+
+    except mysql.connector.Error:
+        mydb.rollback()
         print("Fail")
 
 def countCustomizedModel(bmodels, cursor):
