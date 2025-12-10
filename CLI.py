@@ -166,7 +166,7 @@ def file_read(file_name,folder_path,cursor):
             row = [val.strip() for val in row]  # remove extra whitespace
             cursor.execute(sql, row)  # insert row
 
-def insert_agent_client(mydb, cursor, uid, username, email, cardno, cardholder, expire, zip_code, interests):
+def insert_agent_client(mydb, cursor, uid, username, email, cardno, cardholder, expire, cvv, zip_code, interests):
     try:
         # Insert into User table
         cursor.execute(
@@ -187,8 +187,6 @@ def insert_agent_client(mydb, cursor, uid, username, email, cardno, cardholder, 
     
     except mysql.connector.Error as e:
         print("Fail")
-
-
 
 def add_customized_model(mydb, cursor, mid, bmid):
     try:
@@ -258,7 +256,6 @@ def listBaseModelKeyWord(cursor, keyword):
     for row in rows:
         print(",".join(str(x) for x in row))
 
-
 def main():
     mydb = mysql.connector.connect(
         
@@ -303,11 +300,8 @@ def main():
     elif(sys.argv[1]=="listBaseModelKeyWord"):
         listBaseModelKeyWord(cursor,sys.argv[2])
  
-
-
     cursor.close()
     mydb.close()
-
 
 if __name__ == "__main__":
     main()

@@ -195,7 +195,7 @@ def add_customized_model(mydb, cursor, mid, bmid):
         print("Fail")
 
 def delete_base_model(mydb, cursor, bmid):
-        try:
+    try:
         cursor.execute("DELETE FROM BaseModel WHERE bmid = %s", (bmid,))
 
         if cursor.rowcount == 0:
