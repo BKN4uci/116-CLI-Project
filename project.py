@@ -195,7 +195,7 @@ def add_customized_model(mydb, cursor, mid, bmid):
         print("Fail")
 
 def delete_base_model(mydb, cursor, bmid):
-        try:
+    try:
         cursor.execute("DELETE FROM BaseModel WHERE bmid = %s", (bmid,))
 
         if cursor.rowcount == 0:
@@ -277,6 +277,11 @@ def listBaseModelKeyWord(cursor, keyword):
     for row in rows:
         print(",".join(str(x) for x in row))
 
+def printNL2SQLResult():
+    with open('NL2SQL.csv', newline='') as csvfile:
+        data = csv.reader(csvfile)
+        for row in data:
+            print(",".join("Success" if x == True else ("Fail" if x == False else str(x)) for x in row))
 
 def main():
     mydb = mysql.connector.connect(
@@ -322,9 +327,10 @@ def main():
         client_uid = int(sys.argv[2])
         n = int(sys.argv[3])
         findTopLongestDuration(cursor, client_uid, n)
-    elif(sys.argv[1]=="listBaseModelKeyWord"):
+    elif(sys.argv[1] == "listBaseModelKeyWord"):
         listBaseModelKeyWord(cursor,sys.argv[2])
- 
+    elif(sys.argv[1] == "printNL2SQLresult"):
+        printNL2SQLResult()
 
 
     cursor.close()
